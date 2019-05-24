@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="interfixnet/database" default="dist">
+    <property name="version" value="0.1.0"/>
+
+    <target name="code:sniff">
+        <exec command="vendor/bin/sniff src" checkreturn="true"
+              passthru="true"/>
+        <exec command="vendor/bin/sniff tests" checkreturn="true"
+              passthru="true"/>
+    </target>
+
+    <target name="code:fix">
+        <exec command="vendor/bin/sniff src -f" checkreturn="false"
+              passthru="true"/>
+        <exec command="vendor/bin/sniff tests -f" checkreturn="false"
+              passthru="true"/>
+    </target>
+
+    <target name="deps:install" depends="clean:pkg">
+        <exec command="composer install" checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="deps:update">
+        <exec command="composer update" checkreturn="true" passthru="true"/>
+    </target>
+
+    <target name="clean:dist">
+        <echo msg="Cleaning root"/>
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+
+    <target name="clean:pkg">
+        <delete dir="vendor"/>
+    </target>
+
+    <target name="build">
+        <phingcall target="clean:dist"/>
+
+        <mkdir dir="build"/>
+
+        <echo msg="Copying files"/>
+        <copy todir="build/src">
+            <fileset dir="src">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <copy file="composer.json" todir="build/"/>
+        <copy file="composer.lock" todir="build/"/>
+        <copy file="readme.md" todir="build/"/>
+    </target>
+
+    <target name="dist" depends="build">
+        <autoloader autoloaderpath="vendor/autoload.php"/>
+
+        <mkdir dir="dist"/>
+
+        <tar destfile="dist/${version}.tar.gz" includeemptydirs="true"
+             compression="gzip">
+            <fileset dir="build">
+                <include name="**/**"/>
+            </fileset>
+        </tar>
+
+        <zip destfile="dist/${version}.zip" includeemptydirs="true">
+            <fileset dir="build">
+                <include name="**/**"/>
+            </fileset>
+        </zip>
+    </target>
+</project>
