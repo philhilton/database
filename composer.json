@@ -1,5 +1,5 @@
 {
-  "name": "inerfixnet/database",
+  "name": "interfixnet/database",
   "description": "PHP PDO Abstraction Layer",
   "minimum-stability": "stable",
   "license": "proprietary",
